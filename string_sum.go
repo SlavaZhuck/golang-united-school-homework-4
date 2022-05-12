@@ -42,21 +42,21 @@ func StringSum(input string) (string, error) {
 	}
 
 	temp := strings.Split(output, " ")
-	sum := 0
+	var sum int64 = 0
 	if len(temp) > 1 {
 		for index, num := range temp {
 			temp_int, _ := strconv.Atoi(num)
 			if index == 0 && firstElementIsNegative {
-				sum -= temp_int
+				sum -= int64(temp_int)
 			} else {
-				sum += temp_int
+				sum += int64(temp_int)
 			}
 		}
 	}
 
 	// fmt.Println("temp sum: ", sum)
 	// fmt.Println(temp)
-	return output, nil
+	return strconv.FormatInt(sum, 10), nil
 }
 
 // func main() {

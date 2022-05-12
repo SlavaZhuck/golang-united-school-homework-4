@@ -1,7 +1,11 @@
 package string_sum
 
+// package main
+
 import (
 	"errors"
+	"strconv"
+	"strings"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -22,6 +26,43 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
-func StringSum(input string) (output string, err error) {
-	return "", nil
+func StringSum(input string) (string, error) {
+	output := strings.ReplaceAll(input, " ", "")
+	output = strings.ReplaceAll(input, "+", " +")
+	output = strings.ReplaceAll(input, "-", " -")
+
+	firstElementIsNegative := false
+
+	if strings.HasPrefix(output, " -") {
+		firstElementIsNegative = true
+		output = strings.TrimLeft(output, " -")
+	}
+	if strings.HasPrefix(output, " +") {
+		output = strings.TrimLeft(output, " +")
+	}
+
+	temp := strings.Split(output, " ")
+	sum := 0
+	if len(temp) > 1 {
+		for index, num := range temp {
+			temp_int, _ := strconv.Atoi(num)
+			if index == 0 && firstElementIsNegative {
+				sum -= temp_int
+			} else {
+				sum += temp_int
+			}
+		}
+	}
+
+	// fmt.Println("temp sum: ", sum)
+	// fmt.Println(temp)
+	return output, nil
 }
+
+// func main() {
+// 	m := "+1-2 -3 -5"
+// 	var a string
+// 	fmt.Println(m)
+// 	a, _ = StringSum(m)
+// 	fmt.Println(a)
+// }

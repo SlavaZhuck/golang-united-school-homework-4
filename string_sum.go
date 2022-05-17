@@ -29,48 +29,49 @@ var (
 
 func StringSum(input string) (string, error) {
 	var err error = nil
-	if input == "" {
-		return "", fmt.Errorf("empty input %w", errorEmptyInput)
-	}
-	output := strings.ReplaceAll(input, " ", "")
-	output = strings.ReplaceAll(output, "+", " +")
-	output = strings.ReplaceAll(output, "-", " -")
+	var out string = ""
+	if input != "" {
+		output := strings.ReplaceAll(input, " ", "")
+		output = strings.ReplaceAll(output, "+", " +")
+		output = strings.ReplaceAll(output, "-", " -")
 
-	firstElementIsNegative := false
+		firstElementIsNegative := false
 
-	if strings.HasPrefix(output, " -") {
-		firstElementIsNegative = true
-		output = strings.TrimLeft(output, " -")
-	}
-	if strings.HasPrefix(output, " +") {
-		output = strings.TrimLeft(output, " +")
-	}
+		if strings.HasPrefix(output, " -") {
+			firstElementIsNegative = true
+			output = strings.TrimLeft(output, " -")
+		} else if strings.HasPrefix(output, " +") {
+			output = strings.TrimLeft(output, " +")
+		}
 
-	temp := strings.Split(output, " ")
-	var sum int64 = 0
+		temp := strings.Split(output, " ")
+		var sum int64 = 0
 
-	if len(temp) == 2 {
-		tempInt := 0
-		for index, num := range temp {
-			tempInt, err = strconv.Atoi(num)
-			if err == nil {
-				if index == 0 && firstElementIsNegative {
-					sum -= int64(tempInt)
+		if len(temp) == 2 {
+			tempInt := 0
+			for index, num := range temp {
+				tempInt, err = strconv.Atoi(num)
+				if err == nil {
+					if index == 0 && firstElementIsNegative {
+						sum -= int64(tempInt)
+					} else {
+						sum += int64(tempInt)
+					}
 				} else {
-					sum += int64(tempInt)
+					return "", fmt.Errorf("provided not a number: %w", err)
 				}
-			} else {
-				return "", fmt.Errorf("provided not a number: %w", err)
 			}
-
+			out = strconv.FormatInt(sum, 10)
+		} else {
+			err = fmt.Errorf("something went wrong: %w", errorNotTwoOperands)
 		}
 	} else {
-		err = fmt.Errorf("something went wrong: %w", errorNotTwoOperands)
-		return "", err
+		err = fmt.Errorf("empty input %w", errorEmptyInput)
 	}
+
 	// fmt.Println("temp sum: ", sum)
 	// fmt.Println(temp)
-	return strconv.FormatInt(sum, 10), err
+	return out, err
 }
 
 // func main() {

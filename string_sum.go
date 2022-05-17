@@ -27,51 +27,58 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
+func sliceCalcSum(temp []string, firstElementIsNegative bool) (int, error) {
+	tempInt := 0
+	var sum int = 0
+	var err error = nil
+	for index, num := range temp {
+		tempInt, err = strconv.Atoi(num)
+		if err == nil {
+			if index == 0 && firstElementIsNegative {
+				sum -= tempInt
+			} else {
+				sum += tempInt
+			}
+		} else {
+			return 0, fmt.Errorf("provided not a number: %w", err)
+		}
+	}
+	return sum, nil
+}
+
 func StringSum(input string) (string, error) {
 	var err error = nil
-	var out string = ""
-	if input != "" {
-		output := strings.ReplaceAll(input, " ", "")
-		output = strings.ReplaceAll(output, "+", " +")
-		output = strings.ReplaceAll(output, "-", " -")
+	var sum int = 0
+	if input == "" {
+		return "", fmt.Errorf("empty input %w", errorEmptyInput)
+	}
+	output := strings.ReplaceAll(input, " ", "")
+	output = strings.ReplaceAll(output, "+", " +")
+	output = strings.ReplaceAll(output, "-", " -")
 
-		firstElementIsNegative := false
+	firstElementIsNegative := false
 
-		if strings.HasPrefix(output, " -") {
-			firstElementIsNegative = true
-			output = strings.TrimLeft(output, " -")
-		} else if strings.HasPrefix(output, " +") {
-			output = strings.TrimLeft(output, " +")
-		}
-
-		temp := strings.Split(output, " ")
-		var sum int64 = 0
-
-		if len(temp) == 2 {
-			tempInt := 0
-			for index, num := range temp {
-				tempInt, err = strconv.Atoi(num)
-				if err == nil {
-					if index == 0 && firstElementIsNegative {
-						sum -= int64(tempInt)
-					} else {
-						sum += int64(tempInt)
-					}
-				} else {
-					return "", fmt.Errorf("provided not a number: %w", err)
-				}
-			}
-			out = strconv.FormatInt(sum, 10)
-		} else {
-			err = fmt.Errorf("something went wrong: %w", errorNotTwoOperands)
-		}
-	} else {
-		err = fmt.Errorf("empty input %w", errorEmptyInput)
+	if strings.HasPrefix(output, " -") {
+		firstElementIsNegative = true
+		output = strings.TrimLeft(output, " -")
+	}
+	if strings.HasPrefix(output, " +") {
+		output = strings.TrimLeft(output, " +")
 	}
 
-	// fmt.Println("temp sum: ", sum)
-	// fmt.Println(temp)
-	return out, err
+	temp := strings.Split(output, " ")
+
+	if len(temp) == 2 {
+		sum, err = sliceCalcSum(temp, firstElementIsNegative)
+		if err == nil {
+			return strconv.FormatInt(int64(sum), 10), err
+		} else {
+			return "", err
+		}
+		// }
+	} else {
+		return "", fmt.Errorf("something went wrong: %w", errorNotTwoOperands)
+	}
 }
 
 // func main() {

@@ -4,6 +4,7 @@ package string_sum
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -27,9 +28,10 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (string, error) {
+	var err error = nil
 	output := strings.ReplaceAll(input, " ", "")
-	output = strings.ReplaceAll(input, "+", " +")
-	output = strings.ReplaceAll(input, "-", " -")
+	output = strings.ReplaceAll(output, "+", " +")
+	output = strings.ReplaceAll(output, "-", " -")
 
 	firstElementIsNegative := false
 
@@ -43,26 +45,37 @@ func StringSum(input string) (string, error) {
 
 	temp := strings.Split(output, " ")
 	var sum int64 = 0
-	if len(temp) > 1 {
-		for index, num := range temp {
-			temp_int, _ := strconv.Atoi(num)
-			if index == 0 && firstElementIsNegative {
-				sum -= int64(temp_int)
-			} else {
-				sum += int64(temp_int)
-			}
-		}
-	}
 
+	if len(temp) == 2 {
+		temp_int := 0
+		for index, num := range temp {
+			temp_int, err = strconv.Atoi(num)
+			if err == nil {
+				if index == 0 && firstElementIsNegative {
+					sum -= int64(temp_int)
+				} else {
+					sum += int64(temp_int)
+				}
+			} else {
+				return "", fmt.Errorf("provided not a number: %w", err)
+			}
+
+		}
+	} else {
+		err = fmt.Errorf("something went wrong: %w", errorNotTwoOperands)
+		return "", err
+	}
 	// fmt.Println("temp sum: ", sum)
 	// fmt.Println(temp)
-	return strconv.FormatInt(sum, 10), nil
+	return strconv.FormatInt(sum, 10), err
 }
 
 // func main() {
-// 	m := "+1-2 -3 -5"
+// 	//	m := "+1-2 -3 -5"
+// 	m := "-a-2"
 // 	var a string
 // 	fmt.Println(m)
-// 	a, _ = StringSum(m)
-// 	fmt.Println(a)
+// 	a, e := StringSum(m)
+// 	fmt.Println("string", a)
+// 	fmt.Println("error: ", e)
 // }

@@ -29,6 +29,9 @@ var (
 
 func StringSum(input string) (string, error) {
 	var err error = nil
+	if input == "" {
+		return "", fmt.Errorf("empty input %w", errorEmptyInput)
+	}
 	output := strings.ReplaceAll(input, " ", "")
 	output = strings.ReplaceAll(output, "+", " +")
 	output = strings.ReplaceAll(output, "-", " -")
@@ -47,14 +50,14 @@ func StringSum(input string) (string, error) {
 	var sum int64 = 0
 
 	if len(temp) == 2 {
-		temp_int := 0
+		tempInt := 0
 		for index, num := range temp {
-			temp_int, err = strconv.Atoi(num)
+			tempInt, err = strconv.Atoi(num)
 			if err == nil {
 				if index == 0 && firstElementIsNegative {
-					sum -= int64(temp_int)
+					sum -= int64(tempInt)
 				} else {
-					sum += int64(temp_int)
+					sum += int64(tempInt)
 				}
 			} else {
 				return "", fmt.Errorf("provided not a number: %w", err)
